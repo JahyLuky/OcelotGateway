@@ -1,10 +1,9 @@
-﻿using Microsoft.IdentityModel.Tokens;
+﻿using log4net;
+using Microsoft.IdentityModel.Tokens;
+using OcelotGateway.Models;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using OcelotGateway.Models;
-using log4net;
-using System.Linq;
 
 namespace OcelotGateway.Services
 {
@@ -52,23 +51,27 @@ namespace OcelotGateway.Services
             var now = DateTime.UtcNow;
             var claims = new List<Claim>
             {
-                new Claim(JwtRegisteredClaimNames.Sub, "IntegrationServerSubject"),
+                new Claim(JwtRegisteredClaimNames.Sub, clientId),
                 new Claim(ClaimTypes.Role, client.Role),
+                new Claim(ClaimTypes.NameIdentifier, clientId),
                 new Claim(JwtRegisteredClaimNames.Nbf, DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString()),
                 new Claim(JwtRegisteredClaimNames.Exp, DateTimeOffset.UtcNow.AddHours(8).ToUnixTimeSeconds().ToString()),
-                new Claim(JwtRegisteredClaimNames.Iat, DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString()),
-                new Claim(JwtRegisteredClaimNames.Iss, "IntegrationServerIssuer"),
-                new Claim(JwtRegisteredClaimNames.Aud, "IntegrationServerAudience"),
-                new Claim(ClaimTypes.NameIdentifier, clientId)
+                new Claim(JwtRegisteredClaimNames.Iat, DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString())
             };
+
+            if (client.Allowed != null && client.Allowed.Any())
+            {
+                claims.Add(new Claim("Allowed", string.Join(",", client.Allowed)));
+            }
 
             if (client.Role == "admin")
             {
-                claims.Add(new Claim(ClaimTypes.Role, "web"));
                 claims.Add(new Claim(ClaimTypes.Role, "user"));
             }
 
             var token = new JwtSecurityToken(
+                issuer: _jwtSettings.Issuer,
+                audience: _jwtSettings.Audience,
                 claims: claims,
                 signingCredentials: credentials
             );

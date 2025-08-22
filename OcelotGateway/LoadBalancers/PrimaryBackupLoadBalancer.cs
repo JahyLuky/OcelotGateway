@@ -10,7 +10,6 @@ namespace OcelotGateway.LoadBalancers
         private readonly List<ServiceHostAndPort> _services;
         private readonly ILog _logger;
         private readonly HealthChecker _healthChecker;
-        private readonly object _lock = new object();
 
         public PrimaryBackupLoadBalancer(List<ServiceHostAndPort> services)
         {

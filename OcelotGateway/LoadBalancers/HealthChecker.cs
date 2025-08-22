@@ -22,17 +22,15 @@ namespace OcelotGateway.LoadBalancers
             {
                 var services = new[]
                 {
-                    "health",
-                    "system/health",
                     "sirael/health",
+                    "genesys/health",
+                    "workforce/health",
+                    "workspace/health",
                     "database/health"
                 };
 
                 foreach (var service in services)
                 {
-                    // Check health endpoint for each service
-                    _logger.Debug($"Checking health for {service} at {host}:{port}");
-
                     // Construct the health endpoint URL
                     var endpoint = $"http://{host}:{port}/{service}";
 

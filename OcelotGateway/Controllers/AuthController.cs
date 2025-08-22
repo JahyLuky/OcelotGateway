@@ -17,7 +17,7 @@ namespace OcelotGateway.Controllers
             _logger = LogManager.GetLogger(typeof(AuthController));
         }
 
-        [HttpPost("token")]
+        [HttpGet("token")]
         public IActionResult GetToken([FromQuery] string clientId, [FromQuery] string clientSecret)
         {
             _logger.Info($"Token request received for client ID: {clientId}");
@@ -38,16 +38,6 @@ namespace OcelotGateway.Controllers
                 _logger.Error($"Error generating token: {ex.Message}");
                 return StatusCode(500, "An error occurred while generating the token");
             }
-        }
-
-        [HttpGet("verify")]
-        public IActionResult VerifyToken()
-        {
-            return Ok(new
-            {
-                message = "Token is valid",
-                timestamp = DateTime.UtcNow
-            });
         }
     }
 
