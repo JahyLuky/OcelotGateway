@@ -27,7 +27,7 @@ namespace OcelotGateway.Services
 
         public string GenerateToken(string clientId, string clientSecret)
         {
-            _logger.Info($"Attempting to generate token for client ID: {clientId}");
+            //_logger.Info($"Attempting to generate token for client ID: {clientId}");
 
             if (string.IsNullOrEmpty(clientId) || string.IsNullOrEmpty(clientSecret))
             {
@@ -73,7 +73,7 @@ namespace OcelotGateway.Services
                 signingCredentials: credentials
             );
 
-            _logger.Info($"Successfully generated token for client ID: {clientId} with role: {client.Role}");
+            //_logger.Info($"Successfully generated token for client ID: {clientId} with role: {client.Role}");
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
@@ -111,7 +111,7 @@ namespace OcelotGateway.Services
                     return false;
                 }
 
-                _logger.Info($"Token validation succeeded for client ID: {clientId}");
+                //_logger.Info($"Token validation succeeded for client ID: {clientId}");
                 return true;
             }
             catch (Exception ex)
