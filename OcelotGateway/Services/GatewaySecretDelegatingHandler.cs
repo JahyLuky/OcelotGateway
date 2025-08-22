@@ -16,8 +16,10 @@ namespace OcelotGateway.Services
         {
             var gatewaySecret = _configuration["GatewaySecret"];
             request.Headers.Add("X-Gateway-Secret", gatewaySecret);
+
             // Log outgoing request
             _logger.Info($"Forwarding request: {request.Method} {request.RequestUri}");
+            /*
             foreach (var header in request.Headers)
             {
                 if (header.Key.Equals("Authorization", StringComparison.OrdinalIgnoreCase)
@@ -27,6 +29,7 @@ namespace OcelotGateway.Services
                 }
                 _logger.Info($"Request Header: {header.Key} = {string.Join(",", header.Value)}");
             }
+            */
             if (request.Content != null)
             {
                 var requestBody = await request.Content.ReadAsStringAsync();
@@ -38,10 +41,12 @@ namespace OcelotGateway.Services
             var response = await base.SendAsync(request, cancellationToken);
             // Log response
             _logger.Info($"Response Status: {(int)response.StatusCode} {response.ReasonPhrase}");
+            /*
             foreach (var header in response.Headers)
             {
                 _logger.Info($"Response Header: {header.Key} = {string.Join(",", header.Value)}");
             }
+            */
             if (response.Content != null)
             {
                 var responseBody = await response.Content.ReadAsStringAsync();
