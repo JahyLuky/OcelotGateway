@@ -1,25 +1,6 @@
 {
   "Routes": [
     {
-      "DownstreamPathTemplate": "/database/health",
-      "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "localhost",
-          "Port": 7040
-        },
-        {
-          "Host": "localhost",
-          "Port": 7041
-        }
-      ],
-      "UpstreamPathTemplate": "/database/health",
-      "UpstreamHttpMethod": [ "Get" ],
-      "LoadBalancerOptions": {
-        "Type": "PrimaryBackup"
-      }
-    },
-    {
       "DownstreamPathTemplate": "/swagger/{everything}",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
@@ -36,6 +17,29 @@
       "UpstreamHttpMethod": [ "Get" ],
       "LoadBalancerOptions": {
         "Type": "PrimaryBackup"
+      }
+    },
+	{
+      "DownstreamPathTemplate": "/thirdparty/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7040
+        },
+        {
+          "Host": "localhost",
+          "Port": 7041
+        }
+      ],
+      "UpstreamPathTemplate": "/thirdparty/{everything}",
+      "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
+      "LoadBalancerOptions": {
+        "Type": "PrimaryBackup"
+      },
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer",
+        "AllowedScopes": []
       }
     },
     {
@@ -61,6 +65,25 @@
         "AllowedScopes": []
       }
     },
+	{
+      "DownstreamPathTemplate": "/swagger/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7030
+        },
+        {
+          "Host": "localhost",
+          "Port": 7031
+        }
+      ],
+      "UpstreamPathTemplate": "/sirael/swagger/{everything}",
+      "UpstreamHttpMethod": [ "Get" ],
+      "LoadBalancerOptions": {
+        "Type": "PrimaryBackup"
+      }
+    },
     {
       "DownstreamPathTemplate": "/sirael/{everything}",
       "DownstreamScheme": "http",
@@ -75,6 +98,48 @@
         }
       ],
       "UpstreamPathTemplate": "/sirael/{everything}",
+      "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
+      "LoadBalancerOptions": {
+        "Type": "PrimaryBackup"
+      },
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer",
+        "AllowedScopes": []
+      }
+    },
+	{
+      "DownstreamPathTemplate": "/swagger/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7050
+        },
+        {
+          "Host": "localhost",
+          "Port": 7051
+        }
+      ],
+      "UpstreamPathTemplate": "/StatClient/swagger/{everything}",
+      "UpstreamHttpMethod": [ "Get" ],
+      "LoadBalancerOptions": {
+        "Type": "PrimaryBackup"
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/StatClient/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7050
+        },
+        {
+          "Host": "localhost",
+          "Port": 7051
+        }
+      ],
+      "UpstreamPathTemplate": "/StatClient/{everything}",
       "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
       "LoadBalancerOptions": {
         "Type": "PrimaryBackup"
