@@ -1,12 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using log4net;
+using Microsoft.AspNetCore.Mvc;
 using OcelotGateway.Services;
-using log4net;
-using System.Security.Claims;
 
 namespace OcelotGateway.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     public class AuthController : ControllerBase
     {
         private readonly IJwtService _jwtService;
