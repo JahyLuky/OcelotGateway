@@ -3,7 +3,9 @@ using log4net.Config;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Ocelot.DependencyInjection;
+using Ocelot.LoadBalancer.LoadBalancers;
 using Ocelot.Middleware;
+using OcelotGateway.LoadBalancers;
 using OcelotGateway.Models;
 using OcelotGateway.Services;
 using System.Text;
@@ -79,14 +81,37 @@ try
 
     builder.Services.AddControllers();
     builder.Services.AddEndpointsApiExplorer();
+    builder.Services.AddSwaggerGen(c =>
+    {
+        c.SwaggerDoc("v1", new() { Title = "Ocelot Gateway API", Version = "v1" });
+        c.DocInclusionPredicate((docName, apiDesc) =>
+        {
+            var path = apiDesc.RelativePath.Trim('/');
+            return path.Equals("health", StringComparison.OrdinalIgnoreCase) || 
+                   path.Equals("auth/token", StringComparison.OrdinalIgnoreCase);
+        });
+    });
+    builder.Services.AddHttpContextAccessor();
     builder.Services.AddScoped<IJwtService, JwtService>();
     builder.Services.AddSingleton<GatewaySecretDelegatingHandler>();
-    builder.Services.AddOcelot().AddDelegatingHandler<GatewaySecretDelegatingHandler>(true);
+
+    // Register custom load balancer factory
+    builder.Services.AddSingleton<ILoadBalancerFactory, PrimaryBackupLoadBalancerFactory>();
+
+    builder.Services.AddOcelot()
+        .AddDelegatingHandler<GatewaySecretDelegatingHandler>(true);
 
 
     var app = builder.Build();
 
     app.UsePathBase("/api");
+
+    app.UseSwagger();
+    app.UseSwaggerUI(c =>
+    {
+        c.SwaggerEndpoint("/api/swagger/v1/swagger.json", "Ocelot Gateway API V1");
+        c.RoutePrefix = "swagger";
+    });
 
     app.UseAuthentication();
     app.UseAuthorization();
@@ -95,7 +120,8 @@ try
     {
         var logger = LogManager.GetLogger("OcelotGateway.HeaderLogger");
 
-        logger.Info($"Incoming request: {context.Request.Method} {context.Request.Path}");
+        if (context.Request.Path != "/health")
+            logger.Info($"Incoming request: {context.Request.Method} {context.Request.Path}");
 
         await next();
     });
@@ -103,9 +129,10 @@ try
     app.MapControllers();
 
     // Only call UseOcelot once, excluding specific paths like /api/auth/token and /health
-    app.MapWhen(context => 
-        !context.Request.Path.StartsWithSegments("/auth/token") && 
-        !context.Request.Path.StartsWithSegments("/health"),
+    app.MapWhen(context =>
+        !context.Request.Path.StartsWithSegments("/auth/token") &&
+        !context.Request.Path.StartsWithSegments("/health") &&
+        !context.Request.Path.StartsWithSegments("/swagger"),
         appBuilder =>
         {
             appBuilder.UseOcelot().Wait();

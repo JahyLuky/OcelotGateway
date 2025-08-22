@@ -1,16 +1,84 @@
 {
   "Routes": [
     {
-      "DownstreamPathTemplate": "/database/createCampaignInteraction",
+      "DownstreamPathTemplate": "/database/health",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
           "Port": 7040
+        },
+        {
+          "Host": "localhost",
+          "Port": 7041
         }
       ],
-      "UpstreamPathTemplate": "/database/createCampaignInteraction",
-      "UpstreamHttpMethod": [ "POST" ],
+      "UpstreamPathTemplate": "/database/health",
+      "UpstreamHttpMethod": [ "Get" ],
+      "LoadBalancerOptions": {
+        "Type": "PrimaryBackup"
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/swagger/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7040
+        },
+        {
+          "Host": "localhost",
+          "Port": 7041
+        }
+      ],
+      "UpstreamPathTemplate": "/database/swagger/{everything}",
+      "UpstreamHttpMethod": [ "Get" ],
+      "LoadBalancerOptions": {
+        "Type": "PrimaryBackup"
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/database/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7040
+        },
+        {
+          "Host": "localhost",
+          "Port": 7041
+        }
+      ],
+      "UpstreamPathTemplate": "/database/{everything}",
+      "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
+      "LoadBalancerOptions": {
+        "Type": "PrimaryBackup"
+      },
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer",
+        "AllowedScopes": []
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/sirael/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7030
+        },
+        {
+          "Host": "localhost",
+          "Port": 7031
+        }
+      ],
+      "UpstreamPathTemplate": "/sirael/{everything}",
+      "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
+      "LoadBalancerOptions": {
+        "Type": "PrimaryBackup"
+      },
       "AuthenticationOptions": {
         "AuthenticationProviderKey": "Bearer",
         "AllowedScopes": []
