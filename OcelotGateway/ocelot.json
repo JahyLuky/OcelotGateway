@@ -1,0 +1,56 @@
+{
+  "Routes": [
+    {
+      "DownstreamPathTemplate": "/api/test/{everything}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7030
+        }
+      ],
+      "UpstreamPathTemplate": "/api/test/{everything}",
+      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer",
+        "AllowedScopes": []
+      },
+      "AddHeadersToRequest": {
+        "X-Gateway-Secret": "super-secret-value"
+      }
+    },
+	    {
+      "DownstreamPathTemplate": "/api/Sirael/{everything}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7031
+        }
+      ],
+      "UpstreamPathTemplate": "/api/Sirael/{everything}",
+      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer",
+        "AllowedScopes": []
+      },
+      "AddHeadersToRequest": {
+        "X-Gateway-Secret": "super-secret-value"
+      }
+    }
+  ],
+  "GlobalConfiguration": {
+    "BaseUrl": "https://localhost:3443",
+    "RequestIdKey": "RequestId",
+    "RateLimitOptions": {
+      "ClientIdHeader": "ClientId"
+    },
+    "ExcludedRoutes": [
+      {
+        "DownstreamPathTemplate": "/api/auth/token",
+        "UpstreamPathTemplate": "/api/auth/token",
+        "UpstreamHttpMethod": [ "POST" ]
+      }
+    ]
+  }
+}
